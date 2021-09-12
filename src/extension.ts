@@ -136,10 +136,21 @@ export class CppFormat implements vscode.DocumentFormattingEditProvider,
 				if(count) {
 					let editor = vscode.window.activeTextEditor;
 					if(!editor) { return; }
-					let tabSize = editor.options.tabSize as number;
-					let begin = position.translate(0, -(tabSize * count));
-					let editRange = new vscode.Range(begin, position);
-					let edits: vscode.TextEdit[] = [vscode.TextEdit.delete(editRange)];
+					let edits: vscode.TextEdit[] = [];
+
+
+					if(editor.options.insertSpaces) {
+						let tabSize = editor.options.tabSize as number;
+						let begin = position.translate(0, -(tabSize * count));
+						let editRange = new vscode.Range(begin, position);
+						edits.push(vscode.TextEdit.delete(editRange));
+					}
+					else {
+						let begin = position.translate(0, -count);
+						let editRange = new vscode.Range(begin, position);
+						edits.push(vscode.TextEdit.delete(editRange));
+					}
+
 					return edits;
 				}
 			}

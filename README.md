@@ -9,7 +9,7 @@ C++ Format is a clang-format based C++ code formatter. The code is derived from 
 - Set `"[cpp]": { "editor.defaultFormatter": "psycha0s.cpp-format" }`
 - Enjoy
 
-## Settings the path to clang-format executable
+## Setting the path to clang-format executable
 
 A path to clang-format executable can be set in settings.json file. You can set a different path depending on a platform:
 ```

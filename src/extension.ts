@@ -3,8 +3,18 @@ import cp = require('child_process');
 import path = require('path');
 import sax = require('sax');
 
-export let outputChannel = vscode.window.createOutputChannel('clang-format');
+export let outputChannel = vscode.window.createOutputChannel('cpp-format');
 
+
+function getPlatformString() {
+	switch(process.platform) {
+		case 'win32': return 'windows';
+		case 'linux': return 'linux';
+		case 'darwin': return 'osx';
+	}
+
+	return 'unknown';
+}
 
 export class CppFormat implements vscode.DocumentFormattingEditProvider,
 	vscode.DocumentRangeFormattingEditProvider,
@@ -188,7 +198,8 @@ export class CppFormat implements vscode.DocumentFormattingEditProvider,
 			let stdout = '';
 			let stderr = '';
 			let workingPath = path.dirname(document.fileName);
-			let child = cp.spawn("clang-format", formatArgs, { cwd: workingPath });
+			let executable = this.getExecutablePath();
+			let child = cp.spawn(executable, formatArgs, { cwd: workingPath });
 			child.stdin.end(text);
 			child.stdout.on('data', chunk => stdout += chunk);
 			child.stderr.on('data', chunk => stderr += chunk);
@@ -333,6 +344,21 @@ export class CppFormat implements vscode.DocumentFormattingEditProvider,
 			parser.end();
 
 		});
+	}
+
+	private getExecutablePath() {
+		let platform = getPlatformString();
+		let config = vscode.workspace.getConfiguration('cpp-format');
+
+		let platformExecPath = config.get<string>('executable.' + platform);
+		let defaultExecPath = config.get<string>('executable');
+		let execPath = platformExecPath || defaultExecPath;
+
+		if(!execPath) {
+			return "clang-format";
+		}
+
+		return execPath;
 	}
 }
 

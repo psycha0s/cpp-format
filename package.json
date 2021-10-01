@@ -2,7 +2,7 @@
 	"name": "cpp-format",
 	"displayName": "C++ format",
 	"description": "A clang-format based C++ code formatter",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"publisher": "psycha0s",
 	"repository": "https://github.com/psycha0s/cpp-format",
 	"engines": {

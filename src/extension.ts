@@ -108,9 +108,22 @@ export class CppFormat implements vscode.DocumentFormattingEditProvider,
 		let pos = document.offsetAt(position);
 
 		if(ch === '}') {
-			pos = this.lastIndexOfMatchingChar(pos, text, '{}');
-			let range = new vscode.Range(document.positionAt(pos), position);
-			return this.doFormat(document, range, options, token);
+			if(pos <= 2) {
+				return;
+			}
+
+			pos = this.lastIndexNotOf(pos - 2, text, ' \t\r\n');
+
+			if(pos > 0 && text[pos] === '{') {
+				return;
+			}
+
+			pos = this.lastIndexOfMatchingChar(pos - 1, text, '{}');
+
+			if(pos >= 0) {
+				let range = new vscode.Range(document.positionAt(pos), position);
+				return this.doFormat(document, range, options, token);
+			}
 		}
 		else if(ch === '\n') {
 			if(this.isControlStatement(pos, text)) {
